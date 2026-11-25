@@ -47,6 +47,7 @@ button#go{width:100%;padding:13px;border:0;border-radius:8px;background:var(--ac
 button#go:disabled{background:#c8bdb2;cursor:default}
 #status{font-size:13px;color:var(--sub);margin-top:8px;min-height:1em}
 #status.warn{color:var(--warn)}
+.privacy{font-size:12.5px;color:var(--sub);margin:10px 0 0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff}
 .preview h2{font-size:15px;margin:0 0 8px}
 .zoomWrap{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .zoomWrap canvas{display:block;width:100%;height:auto}
@@ -87,7 +88,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
 <input type="range" id="lsz" min="80" max="120" step="5" value="100">
 </label>
 <label class="proofField" id="proofField" hidden><input type="checkbox" id="proofOn" checked> 미리보기 로고를 인쇄될 색으로 보기</label>
-<label class="field nameField" id="nameField">로고 파일이 없으면 — 상호
+<label class="field nameField" id="nameField">로고 파일이 없으면 — 상호 텍스트로 입력
 <input type="text" id="nm" placeholder="예) 약부의한의원" maxlength="30">
 <small id="nameNote">로고 자리에 글자로 넣습니다.</small>
 </label>
@@ -96,7 +97,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
 </label>
 </div>
 <div class="card">
-<p class="step"><span>2</span>설명 두 줄 적기</p>
+<p class="step"><span>2</span>보충설명 적기</p>
 <label class="field">첫째 줄 <input type="text" id="l1" placeholder="예) 공진단은 100환은 드셔야 돼요" maxlength="80"></label>
 <label class="field">둘째 줄 <input type="text" id="l2" placeholder="예) 한약을 드셔야 잘 낫죠" maxlength="80"></label>
 </div>
@@ -111,6 +112,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
 <button id="go" disabled>준비하는 중…</button>
 <p id="blankNote" style="font-size:13px;color:var(--sub);margin:8px 0 0">아무것도 넣지 않으면 로고 · 글 없는 빈 연력이 받아집니다.</p>
 <div id="status" aria-live="polite"></div>
+<p class="privacy">올린 로고와 글은 이 컴퓨터 안에서만 처리되고, 어디에도 보내거나 저장하지 않습니다.</p>
 <p id="framed" hidden style="font-size:13px;margin:8px 0 0">다른 페이지 안에서는 PDF 받기가 막힐 수 있습니다 — <a id="framedLink" href="#" target="_blank" rel="noopener">새 창에서 열기 ↗</a></p>
 </section>
 <section class="preview">
@@ -135,12 +137,6 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
 <li>달력 · 글자 · 로고 모두 인쇄용(CMYK) 색으로 들어갑니다. 로고는 달력과 같은 기준으로 바꿔 넣어서, 밝은 초록 · 파랑 같은 색은 화면보다 조금 차분해집니다(미리보기에 인쇄될 색으로 보여 드립니다).</li>
 <li>낱장 한두 장이면 배송비가 배보다 배꼽이 되기도 합니다^^;</li>
 <li>A4는 원내 프린터로 뽑아도 되지만, 공휴일 이름 같은 작은 글씨가 조금 뭉개질 수 있습니다.</li>
-</ul>
-<h3>로고 그림 팁</h3>
-<ul>
-<li>바탕이 투명한 PNG가 가장 좋습니다. 흰 바탕과 둘레 여백은 저절로 지웁니다.</li>
-<li>가로 1000픽셀 이상이면 크게 뽑아도 선명합니다.</li>
-<li>올린 로고와 글은 이 컴퓨터 안에서만 처리되고 어디로도 보내지 않습니다(인터넷 없이 동작).</li>
 </ul>
 </div>
 </div>
