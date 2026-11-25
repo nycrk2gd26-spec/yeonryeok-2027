@@ -47,7 +47,7 @@ button#go{width:100%;padding:13px;border:0;border-radius:8px;background:var(--ac
 button#go:disabled{background:#c8bdb2;cursor:default}
 #status{font-size:13px;color:var(--sub);margin-top:8px;min-height:1em}
 #status.warn{color:var(--warn)}
-.privacy{font-size:12.5px;color:var(--sub);margin:10px 0 0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff}
+.privacy{font-size:12.5px;color:var(--sub);margin:8px 0 0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff}
 .preview h2{font-size:15px;margin:0 0 8px}
 .zoomWrap{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .zoomWrap canvas{display:block;width:100%;height:auto}
@@ -80,6 +80,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
 <input type="file" id="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
 <strong>여기를 눌러 로고 파일 고르기</strong><br>(또는 끌어다 놓기 · PNG 권장)
 </label>
+<p class="privacy">올린 로고와 설명글은 이 컴퓨터 안에서만 처리되고, 어디에도 보내거나 저장하지 않습니다.</p>
 <div id="logoInfo" aria-live="polite"></div>
 <div class="logoBtns" id="logoBtns" hidden>
 <button type="button" id="logoChange">로고 바꾸기</button>
@@ -113,7 +114,6 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
 <button id="go" disabled>준비하는 중…</button>
 <p id="blankNote" style="font-size:13px;color:var(--sub);margin:8px 0 0">아무것도 넣지 않으면 로고 · 글 없는 빈 연력이 받아집니다.</p>
 <div id="status" aria-live="polite"></div>
-<p class="privacy">올린 로고와 글은 이 컴퓨터 안에서만 처리되고, 어디에도 보내거나 저장하지 않습니다.</p>
 <p id="framed" hidden style="font-size:13px;margin:8px 0 0">다른 페이지 안에서는 PDF 받기가 막힐 수 있습니다 — <a id="framedLink" href="#" target="_blank" rel="noopener">새 창에서 열기 ↗</a></p>
 </section>
 <section class="preview">
