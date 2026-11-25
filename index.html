@@ -75,6 +75,9 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
 <button type="button" id="logoChange">로고 바꾸기</button>
 <button type="button" id="logoRemove">로고 지우기</button>
 </div>
+<label class="field nameSize" id="logoSizeField" hidden>로고 크기 <output id="lsOut">100%</output>
+<input type="range" id="lsz" min="80" max="120" step="5" value="100">
+</label>
 <label class="field nameField" id="nameField">로고 파일이 없으면 — 상호
 <input type="text" id="nm" placeholder="예) 약부의한의원" maxlength="30">
 <small id="nameNote">로고 자리에 글자로 넣습니다.</small>
@@ -251,7 +254,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
   }
 
   /* logo: {w,h} (잘라낸 뒤 픽셀 크기) 또는 null,  lines: [첫 줄, 둘째 줄],  name: 로고가 없을 때 상호 */
-  function layout(size, logo, lines, fonts, name, nameScale) {
+  function layout(size, logo, lines, fonts, name, nameScale, logoScale) {
     const R = REF[size];
     const out = { size, page: R.page, logo: null, name: null, lines: [], fontSize: R.font, missing: '', shrunk: 1 };
     let textX = R.x0;
@@ -267,6 +270,8 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
       let w = logo.w * s, h = logo.h * s;
       const c = Math.min(1, R.maxW / w, R.maxH / h);
       w *= c; h *= c;
+      const ls = Math.max(0.8, Math.min(1.2, logoScale || 1));   // 받는 분이 밀대로 고른 로고 크기(80~120%)
+      w *= ls; h *= ls;
       out.logo = { x: R.x0, y: R.bottom - h, w, h };   // y = 위쪽 끝
       textX = R.x0 + w + R.gap;
     }
@@ -310,7 +315,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;font-size:12px;color:#
     const latin = await doc.embedFont(fontBytes.latin, { subset: true });
     const ko = await doc.embedFont(fontBytes.ko, { subset: opts.subsetKo === true });
     const fonts = pdfFonts(latin, ko);
-    const L = layout(size, logoPng ? logoPx : null, lines, fonts, name, opts.nameScale);
+    const L = layout(size, logoPng ? logoPx : null, lines, fonts, name, opts.nameScale, opts.logoScale);
     const page = doc.getPage(0);
     const H = page.getHeight();
     if (logoPng && L.logo) {
@@ -415,6 +420,7 @@ const sizeNow = () => document.querySelector('input[name=size]:checked').value;
 const linesNow = () => [$('l1').value, $('l2').value];
 const nameNow = () => $('nm').value.trim();
 const nameScale = () => Number($('ns').value) / 100;
+const logoScale = () => Number($('lsz').value) / 100;
 const isBlank = () => !st.logo && !nameNow() && !linesNow().some((t) => t.trim());
 
 function draw() {
@@ -422,7 +428,9 @@ function draw() {
   const size = sizeNow();
   // 미리보기는 늘 A4 배치로 그린다 — 크기끼리 비율이 같고, 크기를 바꿔도 화면이 흔들리지 않게.
   // (A3는 기준 A3판에서 따로 잰 값이라 0.3pt쯤 달라, 크기를 바꿀 때 로고가 움찔했다.) 받는 PDF는 고른 크기 값으로 만든다.
-  const L = YeonCore.layout('A4', st.logo, linesNow(), st.fonts, nameNow(), nameScale());
+  const L = YeonCore.layout('A4', st.logo, linesNow(), st.fonts, nameNow(), nameScale(), logoScale());
+  $('lsOut').textContent = $('lsz').value + '%';
+  $('logoSizeField').hidden = !st.logo;
   $('nsOut').textContent = $('ns').value + '%';
   $('nameSizeField').hidden = !!st.logo || !nameNow();
   // 화면 그림은 A4 미리보기 위에 A4 좌표로 환산해 그린다(크기끼리 비율이 같음)
@@ -487,7 +495,7 @@ function draw() {
   setStatus(msgs.join(' '), !!L.missing);
   if (!st.logo) { $('logoInfo').textContent = ''; $('logoInfo').className = ''; }
   if (st.logo && L.logo) {
-    const LS = YeonCore.layout(size, st.logo, [], st.fonts);
+    const LS = YeonCore.layout(size, st.logo, [], st.fonts, '', 1, logoScale());
     const dpi = st.logo.w / (LS.logo.w / 72);
     const el = $('logoInfo');
     el.textContent = st.logo.name + ' — ' + st.logo.w + '×' + st.logo.h + '픽셀' + (st.logo.svg ? '' : (dpi < 200 ? ' · 그림이 작아 ' + size + '로 뽑으면 조금 흐릴 수 있습니다(더 큰 파일 권장).' : ' · 인쇄 해상도 충분'));
@@ -499,7 +507,7 @@ function setStatus(t, warn) { $('status').textContent = t; $('status').className
 async function onFile(file) {
   if (!file) return;
   $('logo').value = '';   // 같은 파일을 다시 골라도 바뀌게
-  try { st.logo = await readLogo(file); }
+  try { st.logo = await readLogo(file); $('lsz').value = 100; }
   catch (e) { st.logo = null; draw(); $('logoInfo').textContent = '이 파일은 읽지 못했습니다. PNG나 JPG로 다시 골라 주세요.'; $('logoInfo').className = 'warn'; return; }
   draw();
 }
@@ -508,7 +516,7 @@ const drop = $('drop');
 drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
 drop.addEventListener('dragleave', () => drop.classList.remove('over'));
 drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); onFile(e.dataTransfer.files[0]); });
-['l1', 'l2', 'nm', 'ns'].forEach((id) => $(id).addEventListener('input', draw));
+['l1', 'l2', 'nm', 'ns', 'lsz'].forEach((id) => $(id).addEventListener('input', draw));
 $('logoChange').addEventListener('click', () => $('logo').click());
 $('logoRemove').addEventListener('click', () => { st.logo = null; $('logo').value = ''; draw(); });
 document.querySelectorAll('input[name=size]').forEach((r) => r.addEventListener('change', draw));
@@ -521,7 +529,7 @@ $('go').addEventListener('click', async () => {
     // 빈 연력: 아무것도 덧그리지 않고 원본 일반판 PDF를 그대로 준다(제작자 표기를 넣는 판이면 표기만 더함)
     const bytes = blank && !CREDIT ? bytesOf('b-' + size)
       : (await YeonCore.makePdf({ PDFLib, fontkit }, bytesOf('b-' + size), st.fontBytes,
-        st.logo && st.logo.png, st.logo && { w: st.logo.w, h: st.logo.h }, linesNow(), size, { credit: CREDIT, nameScale: nameScale() }, nameNow())).bytes;
+        st.logo && st.logo.png, st.logo && { w: st.logo.w, h: st.logo.h }, linesNow(), size, { credit: CREDIT, nameScale: nameScale(), logoScale: logoScale() }, nameNow())).bytes;
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
     a.download = '2027연력_' + (blank ? '빈판_' : '') + size + '_작업사이즈.pdf';
